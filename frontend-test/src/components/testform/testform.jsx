@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Form from "../common/form";
+import axios from "axios";
 
 class TestForm extends Form {
   state = {
@@ -25,6 +26,28 @@ class TestForm extends Form {
   };
 
   doSubmit = () => {
+    axios({
+      method: "get",
+      url: "https://f-test-02.glitch.me/data",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(res => {
+        console.log("response:", res);
+        const { from, to } = this.state.data;
+        const { data, token } = res.data;
+        console.log("token", token);
+        const resultObjects = [];
+        console.log("res.data[0]", data[0]);
+        for (let i = from; i <= to; i++) {
+          resultObjects.push(data[i]);
+        }
+        console.log("resultObjects:", resultObjects);
+      })
+      .catch(err => {
+        console.log("error", err);
+      });
     console.log("Submited");
   };
 
