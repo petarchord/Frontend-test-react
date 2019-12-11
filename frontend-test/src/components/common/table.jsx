@@ -1,6 +1,6 @@
 import React from "react";
 
-const Table = () => {
+const Table = ({ rows }) => {
   return (
     <div className="table_holder">
       <table class="table">
@@ -12,7 +12,16 @@ const Table = () => {
             <th scope="col">Velocity</th>
           </tr>
         </thead>
-        <tbody></tbody>
+        <tbody>
+          {rows.map(row => (
+            <tr key={row.index}>
+              <td>{row.index}</td>
+              <td>{row.slot ? row.slot : 0}</td>
+              <td>{row.city ? row.city : "None"}</td>
+              <td>{row.velocity ? row.velocity : 0.0}</td>
+            </tr>
+          ))}
+        </tbody>
       </table>
     </div>
   );

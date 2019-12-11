@@ -1,16 +1,12 @@
 import React, { Component } from "react";
 import Form from "../common/form";
 import axios from "axios";
+import { connect } from "react-redux";
 
 class TestForm extends Form {
-  state = {
-    data: { from: 1, to: 20 },
-    errors: { from: "", to: "" }
-  };
-
   validate = () => {
     const errors = {};
-    const { from, to } = this.state.data;
+    const { from, to } = this.props.data;
     console.log("from", from);
     if (from < 0) {
       errors.from = `Invalid "from": ${from}`;
@@ -35,7 +31,7 @@ class TestForm extends Form {
     })
       .then(res => {
         console.log("response:", res);
-        const { from, to } = this.state.data;
+        const { from, to } = this.props.data;
         const { data, token } = res.data;
         console.log("token", token);
         const resultObjects = [];
@@ -44,6 +40,7 @@ class TestForm extends Form {
           resultObjects.push(data[i]);
         }
         console.log("resultObjects:", resultObjects);
+        this.props.fetchData(resultObjects);
       })
       .catch(err => {
         console.log("error", err);
@@ -64,4 +61,20 @@ class TestForm extends Form {
   }
 }
 
-export default TestForm;
+const mapStoreToProps = store => {
+  console.log("store", store);
+  return {
+    data: store.dataReducer,
+    errors: store.errorReducer
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    updateData: data => dispatch({ type: "UPDATE_DATA", payload: data }),
+    fetchData: data => dispatch({ type: "FETCH_DATA", payload: data }),
+    dispatchError: error => dispatch({ type: "DISPATCH_ERROR", payload: error })
+  };
+};
+
+export default connect(mapStoreToProps, mapDispatchToProps)(TestForm);

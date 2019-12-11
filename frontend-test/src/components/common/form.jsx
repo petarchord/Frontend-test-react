@@ -7,17 +7,15 @@ class Form extends Component {
   handleSubmit = e => {
     e.preventDefault();
     const errors = this.validate();
-    console.log("errors:", errors);
-    this.setState({ errors: errors || {} });
+    this.props.dispatchError(errors || {});
     if (errors) return;
     this.doSubmit();
   };
 
   handleChange = e => {
-    console.log("e", e.currentTarget.name);
-    const data = { ...this.state.data };
-    data[e.currentTarget.name] = e.currentTarget.value;
-    this.setState({ data });
+    const data = { ...this.props.data };
+    data[e.currentTarget.name] = parseInt(e.currentTarget.value);
+    this.props.updateData(data);
   };
 
   renderButton(label) {
@@ -29,7 +27,8 @@ class Form extends Component {
   }
 
   renderInput(label, type, id, placeholder, name) {
-    const { data, errors } = this.state;
+    const data = this.props.data;
+    const errors = this.props.errors;
     return (
       <Input
         label={label}
