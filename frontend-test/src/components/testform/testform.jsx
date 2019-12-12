@@ -7,7 +7,6 @@ class TestForm extends Form {
   validate = () => {
     const errors = {};
     const { from, to } = this.props.data;
-    console.log("from", from);
     if (from < 0) {
       errors.from = `Invalid "from": ${from}`;
     }
@@ -26,26 +25,69 @@ class TestForm extends Form {
       method: "get",
       url: "https://f-test-02.glitch.me/data",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token")
       }
     })
       .then(res => {
         console.log("response:", res);
         const { from, to } = this.props.data;
         const { data, token } = res.data;
-        console.log("token", token);
+        localStorage.setItem("token", token);
         const resultObjects = [];
-        console.log("res.data[0]", data[0]);
-        for (let i = from; i <= to; i++) {
-          resultObjects.push(data[i]);
+        let matchedIndexes = this.findMatchedIndexes(
+          from,
+          to,
+          data.slice(from - 1, to + 1)
+        );
+
+        if (matchedIndexes) {
+          let resultIndex;
+          for (let i = 0; i < matchedIndexes.length; i++) {
+            resultIndex = data[matchedIndexes[i]].index - 1;
+            resultObjects[resultIndex] = data[matchedIndexes[i]];
+          }
+
+          for (let i = 0; i < to; i++) {
+            if (!resultObjects[i]) {
+              resultObjects[i] = {
+                index: i + 1,
+                slot: null,
+                city: null,
+                velocity: null
+              };
+            }
+          }
+        } else {
+          for (let i = from; i <= to; i++) {
+            resultObjects[i] = {
+              index: i,
+              slot: null,
+              city: null,
+              velocity: null
+            };
+          }
         }
-        console.log("resultObjects:", resultObjects);
+
         this.props.fetchData(resultObjects);
       })
       .catch(err => {
         console.log("error", err);
       });
     console.log("Submited");
+  };
+
+  findMatchedIndexes = (from, to, array) => {
+    let matchedIndexes = [];
+    for (let i = 0; i <= to; i++) {
+      for (let j = from; j <= to; j++) {
+        if (array[i].index === j) {
+          matchedIndexes.push(i);
+        }
+      }
+    }
+
+    return matchedIndexes.length ? matchedIndexes : null;
   };
 
   render() {
@@ -62,7 +104,6 @@ class TestForm extends Form {
 }
 
 const mapStoreToProps = store => {
-  console.log("store", store);
   return {
     data: store.dataReducer,
     errors: store.errorReducer

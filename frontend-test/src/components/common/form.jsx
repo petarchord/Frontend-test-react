@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import Input from "./input";
 
 class Form extends Component {
-  state = {};
-
   handleSubmit = e => {
     e.preventDefault();
     const errors = this.validate();

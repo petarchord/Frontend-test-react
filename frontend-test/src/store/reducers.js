@@ -1,11 +1,6 @@
 import { combineReducers } from "redux";
 
-const initalData = {
-  from: 1,
-  to: 20
-};
-
-const dataReducer = (state = initalData, action) => {
+const dataReducer = (state = { from: 1, to: 20 }, action) => {
   switch (action.type) {
     case "UPDATE_DATA":
       return {

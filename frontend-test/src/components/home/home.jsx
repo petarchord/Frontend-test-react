@@ -7,7 +7,6 @@ class Home extends Component {
   state = {};
 
   renderTable = () => {
-    console.log("this.props.dataApi", this.props.dataApi);
     if (this.props.dataApi.length) return <Table rows={this.props.dataApi} />;
   };
 
